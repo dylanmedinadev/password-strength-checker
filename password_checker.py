@@ -44,6 +44,13 @@ if email.lower() in password.lower():
     score -= 1
     feedback.append("Your password is similar to your email")
 
+common_passwords = ["password", "123456", "qwerty", "password1", "admin", "letmein"]
+for word in common_passwords:
+    if word in password.lower():
+        score -= 1
+        if "This is a commonly used password and is very easy to guess" not in feedback:
+            feedback.append("This is a commonly used password and is very easy to guess")
+
 if score <= 2:
     strength = "Weak"
 elif score <= 4:
