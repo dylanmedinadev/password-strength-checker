@@ -51,6 +51,31 @@ for word in common_passwords:
         if "This is a commonly used password and is very easy to guess" not in feedback:
             feedback.append("This is a commonly used password and is very easy to guess")
 
+pool = 0
+if re.search(r'[a-z]', password):
+    pool += 26
+if re.search(r'[A-Z]', password):
+    pool += 26
+if re.search(r'\d', password):
+    pool += 10
+if re.search(r'[!@#$%]', password):
+    pool += 32
+
+combinations = pool ** len(password)
+seconds = combinations / 1_000_000_000
+
+if seconds < 60:
+    crack_time = "less than a mintue"
+elif seconds < 3600:
+    crack_time = "a few mintues"
+elif seconds < 86400:
+    crack_time = "a few hours"
+elif seconds < 31536000:
+    crack_time = "a few days"
+else:
+    crack_time = "years or longer"
+print("Estimated crack time:", crack_time)
+
 if score <= 2:
     strength = "Weak"
 elif score <= 4:
