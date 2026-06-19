@@ -1,4 +1,18 @@
 import re
+import hashlib
+import requests
+
+def check_breach(password):
+    sha1_password = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
+    first5 = sha1_password[:5]
+    rest = sha1_password[5:]
+    response = requests.get(f"https://api.pwnedpasswords.com/range/{first5}")
+    hashes = response.text.splitlines()
+    for h in hashes:
+        hash_value, count = h.split(":")
+        if hash_value == rest:
+            return int(count)
+    return 0
 
 name = input("Enter your name: ")
 email = input("Enter your email: ")
@@ -38,7 +52,8 @@ name_parts = name.split()
 for part in name_parts:
     if part.lower() in password.lower():
         score -= 1 
-        feedback.append("Your password contains part of your name")
+        if "Your password contains part of your name" not in feedback:
+            feedback.append("Your password contains part of your name")
 
 if email.lower() in password.lower():
     score -= 1
@@ -75,6 +90,13 @@ elif seconds < 31536000:
 else:
     crack_time = "years or longer"
 print("Estimated crack time:", crack_time)
+
+breach_count = check_breach(password)
+if breach_count > 0:
+    score -= 3
+    feedback.append(f"This password has been seen in {breach_count} data breaches!")
+else:
+    feedback.append("Good news! This password was not found in any known data breaches.")
 
 if score <= 2:
     strength = "Weak"
