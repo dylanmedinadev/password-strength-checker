@@ -109,3 +109,5 @@ print("Password strength:" , strength)
 print("Feedback:")
 for tip in feedback:
     print("-", tip)
+hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+print("How your password would be stored securely (hased):", hashed_password)
